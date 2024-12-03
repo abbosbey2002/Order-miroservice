@@ -36,10 +36,6 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
-      # Ma'lumotlar bazasi migratsiyasi
-      - name: Run Database Migrations
-        run: php artisan migrate --env=testing --force
-
       # PHPUnit testlarini ishlatish
       - name: Run PHPUnit Tests
         run: vendor/bin/phpunit --testdox
