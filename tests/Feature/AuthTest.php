@@ -11,7 +11,7 @@ class AuthTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * A basic feature test example.
+     * Тест на успешность регистрации
      */
     public function test_success_register()
     {
@@ -35,7 +35,9 @@ class AuthTest extends TestCase
             'email' => 'exapletest123456@gmail.com',
         ]);
     }
-
+     /**
+     * Тест ошибки регистра
+     */
     public function test_error_register()
     {
         $data = [

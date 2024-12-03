@@ -323,3 +323,22 @@
   "message": "This order does not belong to you."
 }
 ```
+
+
+
+# Тестирование проекта
+
+Этот проект проверяет, что основные функции работают корректно. Если возникнут ошибки, обязательно свяжитесь с разработчиком для их устранения.
+---
+
+Тестовая команда:
+
+    php artisan test
+
+<img src="./test.png" />
+<p>
+
+[Programmist](https://t.me/Abbos009) или
+[Software engineer](https://t.me/software_engineer5)
+
+</p>
