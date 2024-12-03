@@ -44,7 +44,7 @@ jobs:
 
       # Install Composer dependencies
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
+        run: composer install
 
       # Set up application key
       - name: Generate application key
