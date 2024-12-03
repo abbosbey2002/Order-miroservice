@@ -10,6 +10,18 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_database
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping --silent" --health-timeout=10s --health-retries=3
+
     steps:
       # Kodni yuklash
       - name: Checkout Code
@@ -28,18 +40,24 @@ jobs:
       - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
-      # `.env` faylini sozlash
+      # `.env.testing` faylini sozlash
       - name: Set up Application Environment
-        run: cp .env.example .env
+        run: |
+          cp .env.example .env
+          cp .env.testing .env # .env.testing faylini qo'lda yuklash
 
       # Artisan asosiy sozlamalari
       - name: Generate Application Key
-        run: php artisan key:generate
+        run: php artisan key:generate --env=testing
+
+      # Ma'lumotlar bazasini yaratish va migratsiyalarni bajarish
+      - name: Run Database Migrations
+        run: php artisan migrate --env=testing
 
       # PHPUnit testlarini ishlatish
       - name: Run PHPUnit Tests
         run: vendor/bin/phpunit --testdox
 
-        # Laravel testlarini ishlatish
+      # Laravel testlarini ishlatish
       - name: Run Laravel Tests
         run: php artisan test --env=testing --parallel
