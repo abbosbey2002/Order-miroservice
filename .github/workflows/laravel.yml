@@ -57,7 +57,3 @@ jobs:
       # PHPUnit testlarini ishlatish
       - name: Run PHPUnit Tests
         run: vendor/bin/phpunit --testdox
-
-      # Laravel testlarini ishlatish
-      - name: Run Laravel Tests
-        run: php artisan test --env=testing --parallel
