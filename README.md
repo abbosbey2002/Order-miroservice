@@ -20,8 +20,8 @@
 1. Клонируйте репозиторий:
 
     ```bash
-    git clone <ссылка-на-репозиторий>
-    cd <название-папки-репозитория>
+    git clone https://github.com/abbosbey2002/Order-miroservice
+    cd Order-miroservice
 
     ```
 
