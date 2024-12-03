@@ -5,74 +5,45 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - main
 
 jobs:
-  laravel-tests:
+  tests:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_DATABASE: test_db
-          MYSQL_USER: root
-          MYSQL_PASSWORD: secret
-          MYSQL_ROOT_PASSWORD: secret
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-        ports:
-          - 3306:3306
-
     steps:
-      # Checkout repository
-      - name: Checkout repository
+      # Kodni yuklash
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Setup PHP
-      - name: Setup PHP
+      # PHP-ni sozlash
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: mbstring, pdo, pdo_mysql
-          ini-values: post_max_size=256M, upload_max_filesize=256M
-          coverage: none
+          php-version: "8.2" # PHP versiyasini loyihangizga moslang
+          extensions: pdo_mysql # MySQL kengaytmasini yoqing
+          ini-values: post_max_size=256M # PHP konfiguratsiyasi
+          coverage: xdebug # Kod qamrovini o'lchash uchun Xdebug
 
-      # Install Composer dependencies
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
+      # PHP kutubxonalarini o'rnatish
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
 
-      # Set up application key
-      - name: Generate application key
+      # `.env` faylini sozlash
+      - name: Set up Application Environment
+        run: cp .env.example .env
+
+      # Artisan asosiy sozlamalari
+      - name: Generate Application Key
         run: php artisan key:generate
 
-      # Configure environment
-      - name: Set environment variables
-        run: |
-          cp .env.example .env
-          php artisan config:cache
+      # Ma'lumotlar bazasi migratsiyasi
+      - name: Run Database Migrations
+        run: php artisan migrate --env=testing --force
 
-      # Prepare the database
-      - name: Prepare database
-        run: |
-          php artisan migrate --force
-          php artisan db:seed --force
-
-      # Run tests
-      - name: Run tests
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: test_db
-          DB_USERNAME: root
-          DB_PASSWORD: secret
+      # PHPUnit testlarini ishlatish
+      - name: Run PHPUnit Tests
         run: vendor/bin/phpunit --testdox
 
-      # Code quality checks (optional)
-      - name: Run Laravel Pint (code style check)
-        run: composer require --dev laravel/pint && vendor/bin/pint --test
+        # Laravel testlarini ishlatish
+      - name: Run Laravel Tests
+        run: php artisan test --env=testing --parallel
